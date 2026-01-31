@@ -4,7 +4,7 @@ from typing import List
 from analysis.services.inference_engine import InferenceEngine
 from analysis.models import GapAnalysisReport, SkillAnalysis
 from assignments.models import AssignmentAttempt
-from aptify.api import django_auth
+from aptify.auth import django_auth
 
 router = Router()
 

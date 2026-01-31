@@ -13,8 +13,4 @@ api = NinjaAPI(
 api.add_router("/assignments", assignments_router)
 api.add_router("/analysis", analysis_router)
 
-# Authentication placeholder
-def django_auth(request):
-    if request.user.is_authenticated:
-        return request.user
-    return None
+

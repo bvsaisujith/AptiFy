@@ -110,7 +110,7 @@ class Submission(models.Model):
     """
     Base model for individual question submissions.
     """
-    attempt = models.ForeignKey(AssignmentAttempt, related_name='submissions', on_delete=models.CASCADE)
+    attempt = models.ForeignKey(AssignmentAttempt, related_name='%(class)s_submissions', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     time_taken_seconds = models.FloatField(help_text="Time taken to answer this specific question")
