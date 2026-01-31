@@ -9,10 +9,3 @@ wheels/
 # Virtual environments
 .venv
 .env
-
-
-db.sqlite3
-.venv/*
-.ruff_cache/
-
-
