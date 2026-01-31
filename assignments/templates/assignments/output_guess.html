@@ -1,0 +1,60 @@
+{% extends 'assignments/base.html' %}
+
+{% block title %}Logical Reasoning | AptiFy{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="question-header">
+        <div class="question-meta">
+            <span class="badge">Logic Section</span>
+        </div>
+        <h2 class="question-title">Predict the output of the following code:</h2>
+    </div>
+
+    <div class="code-block">
+        <pre>{{ question.code_snippet }}</pre>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Your Output Prediction:</label>
+        <input type="text" id="output-input" class="input-field" placeholder="Type the exact output here...">
+    </div>
+
+    <div style="display: flex; justify-content: flex-end;">
+        <button id="submit-btn" class="btn btn-primary" onclick="submitOutput()">
+            Submit Prediction
+        </button>
+    </div>
+</div>
+
+<input type="hidden" id="attempt-id" value="{{ attempt_id }}">
+<input type="hidden" id="question-id" value="{{ question.id }}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function submitOutput() {
+        const attemptId = document.getElementById('attempt-id').value;
+        const questionId = document.getElementById('question-id').value;
+        const predicted = document.getElementById('output-input').value;
+        const btn = document.getElementById('submit-btn');
+
+        if (!predicted.trim()) {
+            alert("Please enter a prediction.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Submitting...";
+
+        try {
+            await AssignmentAPI.submitOutput(attemptId, questionId, predicted);
+            window.location.href = "{{ next_url }}";
+        } catch (e) {
+            console.error(e);
+            alert("Submission failed.");
+            btn.disabled = false;
+        }
+    }
+</script>
+{% endblock %}

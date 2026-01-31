@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from aptify.api import api
 
 urlpatterns = [
     path('aptify-admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
+    path('assignments/', include('assignments.urls')),
+    path('analysis/', include('analysis.urls')),
+    path('api/', api.urls),
 ]

@@ -1,0 +1,79 @@
+{% extends 'assignments/base.html' %}
+
+{% block title %}Quiz Section | AptiFy{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="question-header">
+        <div class="question-meta">
+            <span class="badge">Question {{ question_number }} of {{ total_questions }}</span>
+            <span style="margin-left: auto;">Quiz Section</span>
+        </div>
+        <h2 class="question-title">{{ question.text }}</h2>
+    </div>
+
+    <div class="options-grid" id="options-container">
+        {% for option in question.options %}
+        <div class="option-card" onclick="selectOption('{{ option.id }}', this)">
+            <span style="font-weight: 600; margin-right: 0.5rem; color: var(--primary-color);">{{ option.id|upper
+                }}.</span>
+            {{ option.text }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="display: flex; justify-content: flex-end;">
+        <button id="submit-btn" class="btn btn-primary" onclick="submitAnswer()" disabled>
+            Submit Answer
+        </button>
+    </div>
+</div>
+
+<!-- Hidden inputs to track state -->
+<input type="hidden" id="attempt-id" value="{{ attempt_id }}">
+<input type="hidden" id="question-id" value="{{ question.id }}">
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let selectedOptionId = null;
+
+    function selectOption(id, element) {
+        selectedOptionId = id;
+
+        // UI Selection
+        document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+        element.classList.add('selected');
+
+        document.getElementById('submit-btn').disabled = false;
+    }
+
+    async function submitAnswer() {
+        const attemptId = document.getElementById('attempt-id').value;
+        const questionId = document.getElementById('question-id').value;
+        const btn = document.getElementById('submit-btn');
+
+        if (!selectedOptionId) return;
+
+        btn.disabled = true;
+        btn.innerText = "Submitting...";
+
+        try {
+            const result = await AssignmentAPI.submitQuiz(attemptId, questionId, selectedOptionId);
+            // Logic to move to next question.
+            // For now, we assume backend directs or we request next content.
+            // Simplified: Reload or Redirect to next question ID provided by backend?
+            // Since we rely on Django views, we might need to redirect to the next view URL.
+            // Let's assume the view handles next logic via a 'next_url' in context or we deduce it.
+            // Ideally, we'd fetch the next question via API and re-render partial, but we are using Views.
+            window.location.href = "{{ next_url }}";
+        } catch (e) {
+            console.error(e);
+            alert("Submission failed.");
+            btn.disabled = false;
+            btn.innerText = "Submit Answer";
+        }
+    }
+</script>
+{% endblock %}
