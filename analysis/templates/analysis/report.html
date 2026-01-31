@@ -1,0 +1,52 @@
+{% extends 'assignments/base.html' %}
+
+{% block title %}Intelligence Report | AptiFy{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 900px; margin: 2rem auto;">
+    <div
+        style="text-align: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <span class="badge" style="background: var(--primary-color); font-size: 0.9rem;">CONFIDENCE: {{
+            report.confidence_level }}%</span>
+        <h1 style="margin-top: 1rem;">AI Learning Gap Analysis</h1>
+        <p style="color: var(--text-secondary);">Generated for {{ report.student.username }} on {{ report.generated_at
+            }}</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div>
+            <h3 style="color: var(--error-color); margin-bottom: 1rem;">Primary Gap Identified</h3>
+            <div class="card" style="background: #fef2f2; border: 1px solid #fee2e2; color: #b91c1c;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">{{ report.primary_gap }}</h2>
+                <p>{{ report.recommendation }}</p>
+            </div>
+        </div>
+        <div>
+            <h3 style="color: var(--warning-color); margin-bottom: 1rem;">Secondary Focus</h3>
+            <div class="card" style="background: #fffbeb; border: 1px solid #fef3c7; color: #b45309;">
+                <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem;">{{ report.secondary_gap }}</h2>
+                <p>Focus on improving this area to support your primary learning path.</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+        <h3>Skill Traversal Path</h3>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+            {% for node in report.skill_traversal_path %}
+            <div
+                style="padding: 0.5rem 1rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 99px; font-weight: 500;">
+                {{ node }}
+            </div>
+            {% if not forloop.last %}
+            <div style="color: var(--text-secondary);">→</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+        <a href="{% url 'assignments:start' %}" class="btn btn-primary">Start New Session</a>
+    </div>
+</div>
+{% endblock %}
