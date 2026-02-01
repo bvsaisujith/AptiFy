@@ -17,16 +17,38 @@ class ReportSchema(Schema):
     skill_traversal_path: List[str]
     generated_at: str
 
+class ReportListItemSchema(Schema):
+    attempt_id: int
+    primary_gap: str
+    secondary_gap: str
+    confidence_level: float
+    recommendation: str
+    generated_at: str
+
+@router.get("/reports", auth=django_auth, response=List[ReportListItemSchema])
+def list_reports(request):
+    """List current user's gap analysis reports (latest first)."""
+    reports = GapAnalysisReport.objects.filter(student=request.user).select_related("attempt").order_by("-generated_at")
+    return [
+        {
+            "attempt_id": r.attempt_id,
+            "primary_gap": r.primary_gap,
+            "secondary_gap": r.secondary_gap,
+            "confidence_level": r.confidence_level,
+            "recommendation": r.recommendation,
+            "generated_at": r.generated_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        for r in reports
+    ]
+
 @router.post("/generate/{attempt_id}", auth=django_auth, response=ReportSchema)
 def generate_analysis(request, attempt_id: int):
     """
     Triggers the AI Inference Engine for a specific attempt.
     Returns the generated learning gap report.
     """
-    # Ensure user owns the attempt or is admin (skipped for demo strictness, but good practice)
-    # attempt = get_object_or_404(AssignmentAttempt, id=attempt_id, user=request.user)
-    
-    report = InferenceEngine.analyze_attempt(attempt_id)
+    attempt = get_object_or_404(AssignmentAttempt, id=attempt_id, user=request.user)
+    report = InferenceEngine.analyze_attempt(attempt.id)
     
     return {
         "student_name": report.student.username,
@@ -40,7 +62,7 @@ def generate_analysis(request, attempt_id: int):
 
 @router.get("/report/{attempt_id}", auth=django_auth, response=ReportSchema)
 def get_report(request, attempt_id: int):
-    report = get_object_or_404(GapAnalysisReport, attempt_id=attempt_id)
+    report = get_object_or_404(GapAnalysisReport, attempt_id=attempt_id, student=request.user)
     return {
         "student_name": report.student.username,
         "primary_gap": report.primary_gap,

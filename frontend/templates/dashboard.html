@@ -45,7 +45,7 @@
         </div>
       </section>
 
-      <section class="snapshot-grid">
+      <section class="snapshot-grid" id="dashboard-snapshots">
         <article class="snapshot-card">
           <div class="snapshot-header">
             <span class="snapshot-icon">📘</span>
@@ -53,9 +53,9 @@
           </div>
           <div class="snapshot-metric">
             <span>Quiz Score</span>
-            <strong>82%</strong>
+            <strong id="metric-concept">—</strong>
           </div>
-          <p class="snapshot-note">Strong Theory</p>
+          <p class="snapshot-note" id="note-concept">Loading…</p>
         </article>
         <article class="snapshot-card">
           <div class="snapshot-header">
@@ -64,9 +64,9 @@
           </div>
           <div class="snapshot-metric">
             <span>Output Guessing</span>
-            <strong>61%</strong>
+            <strong id="metric-logic">—</strong>
           </div>
-          <p class="snapshot-note">Needs Practice</p>
+          <p class="snapshot-note" id="note-logic">Loading…</p>
         </article>
         <article class="snapshot-card">
           <div class="snapshot-header">
@@ -75,43 +75,37 @@
           </div>
           <div class="snapshot-metric">
             <span>Problem Solving</span>
-            <strong>38%</strong>
+            <strong id="metric-execution">—</strong>
           </div>
-          <p class="snapshot-note">Execution Weak</p>
+          <p class="snapshot-note" id="note-execution">Loading…</p>
         </article>
       </section>
 
-      <section class="insight-card">
+      <section class="insight-card" id="dashboard-insight">
         <div class="insight-header">
           <h2>🧠 AI Learning Insight</h2>
-          <p>You demonstrate strong theoretical understanding but face difficulty applying concepts during problem solving.
-            Primary gap detected in execution and algorithm application.</p>
+          <p id="insight-text">Loading insight…</p>
         </div>
-        <div class="chip-group">
-          <span class="chip-label">Weak Skills:</span>
-          <span class="chip">Algorithm Application</span>
-          <span class="chip">Loop Execution</span>
-          <span class="chip">Problem Decomposition</span>
-        </div>
+        <div class="chip-group" id="insight-chips"></div>
       </section>
 
-      <section class="flow-card">
+      <section class="flow-card" id="dashboard-flow">
         <h3>Performance Flow</h3>
         <div class="flow-row">
           <div class="flow-step">
             <span>Concept</span>
-            <strong>82%</strong>
-            <div class="flow-bar"><span style="width: 82%"></span></div>
+            <strong id="flow-concept">—</strong>
+            <div class="flow-bar"><span id="bar-concept" style="width: 0%"></span></div>
           </div>
           <div class="flow-step">
             <span>Logic</span>
-            <strong>61%</strong>
-            <div class="flow-bar"><span style="width: 61%"></span></div>
+            <strong id="flow-logic">—</strong>
+            <div class="flow-bar"><span id="bar-logic" style="width: 0%"></span></div>
           </div>
           <div class="flow-step">
             <span>Execution</span>
-            <strong>38%</strong>
-            <div class="flow-bar"><span style="width: 38%"></span></div>
+            <strong id="flow-execution">—</strong>
+            <div class="flow-bar"><span id="bar-execution" style="width: 0%"></span></div>
           </div>
         </div>
       </section>
@@ -123,4 +117,74 @@
     </main>
   </div>
 </div>
+
+<script>
+(function() {
+  const API = { base: '/api', credentials: 'same-origin' };
+  function set(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
+  function setBar(id, pct) {
+    var el = document.getElementById(id);
+    if (el) { el.style.width = (pct || 0) + '%'; }
+  }
+
+  function noteFor(score) {
+    if (score == null) return '—';
+    if (score >= 70) return 'Strong';
+    if (score >= 50) return 'Needs Practice';
+    return 'Needs Reinforcement';
+  }
+
+  function renderScores(attempt) {
+    var c = attempt ? Math.round(attempt.concept_score) : null;
+    var l = attempt ? Math.round(attempt.logic_score) : null;
+    var e = attempt ? Math.round(attempt.execution_score) : null;
+    set('metric-concept', c != null ? c + '%' : '—');
+    set('metric-logic', l != null ? l + '%' : '—');
+    set('metric-execution', e != null ? e + '%' : '—');
+    set('note-concept', noteFor(c));
+    set('note-logic', noteFor(l));
+    set('note-execution', noteFor(e));
+    set('flow-concept', c != null ? c + '%' : '—');
+    set('flow-logic', l != null ? l + '%' : '—');
+    set('flow-execution', e != null ? e + '%' : '—');
+    setBar('bar-concept', c);
+    setBar('bar-logic', l);
+    setBar('bar-execution', e);
+  }
+
+  function renderInsight(report) {
+    var p = document.getElementById('insight-text');
+    var chips = document.getElementById('insight-chips');
+    if (!report) {
+      if (p) p.textContent = 'Complete an assignment and generate a report to see your AI learning insight.';
+      if (chips) chips.innerHTML = '';
+      return;
+    }
+    if (p) p.textContent = report.recommendation || 'No recommendation yet.';
+    if (chips) {
+      var html = '';
+      if (report.primary_gap) html += '<span class="chip">Primary: ' + escapeHtml(report.primary_gap) + '</span>';
+      if (report.secondary_gap) html += '<span class="chip">Secondary: ' + escapeHtml(report.secondary_gap) + '</span>';
+      chips.innerHTML = html || '<span class="chip">No gaps identified yet.</span>';
+    }
+  }
+  function escapeHtml(s) {
+    var div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  Promise.all([
+    fetch(API.base + '/assignments/attempts', { credentials: API.credentials }).then(r => r.ok ? r.json() : []).catch(function() { return []; }),
+    fetch(API.base + '/analysis/reports', { credentials: API.credentials }).then(r => r.ok ? r.json() : []).catch(function() { return []; })
+  ]).then(function(res) {
+    var attempts = res[0] || [];
+    var reports = res[1] || [];
+    var latest = attempts[0] || null;
+    var latestReport = reports[0] || null;
+    renderScores(latest);
+    renderInsight(latestReport);
+  });
+})();
+</script>
 {% endblock %}

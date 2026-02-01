@@ -61,6 +61,7 @@ ALLOWED_HOSTS = (
 # Application definition
 
 INSTALLED_APPS = [
+    "allauth_ui",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.sites",
@@ -77,6 +78,8 @@ INSTALLED_APPS = [
     "users",
     "assignments",
     "analysis",
+    "widget_tweaks",
+    "slippers",
 ]
 
 MIDDLEWARE = [
@@ -288,3 +291,4 @@ ACCOUNT_SESSION_REMEMBER = True
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
+ALLAUTH_UI_THEME = "light"

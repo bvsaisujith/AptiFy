@@ -14,4 +14,8 @@ dependencies = [
     "django-environ>=0.10.0",
     "django-environ>=0.12.0",
     "pillow>=12.1.0",
+    "django-allauth-ui>=1.8.1",
+    "django-widget-tweaks>=1.5.1",
+    "slippers>=0.6.2",
+    "gunicorn>=24.1.1",
 ]

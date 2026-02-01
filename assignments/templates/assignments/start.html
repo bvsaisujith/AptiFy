@@ -21,16 +21,66 @@
             </ul>
         </div>
 
-        <!-- For demo, we hardcode assignment ID 1 -->
-        <button id="start-btn" class="btn btn-primary" onclick="startAssignment(1)">
-            Start Assessment
-        </button>
+        <div id="assignment-picker" class="info-panel" style="margin-top: 1rem;">
+            <p id="assignment-loading">Loading assignments…</p>
+            <select id="assignment-select" style="display: none; margin-bottom: 0.5rem; padding: 0.5rem; min-width: 200px;"></select>
+            <button id="start-btn" class="btn btn-primary" onclick="startSelectedAssignment()" disabled>
+                Start Assessment
+            </button>
+        </div>
     </div>
 </section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    let assignmentsList = [];
+
+    async function loadAssignments() {
+        const picker = document.getElementById('assignment-picker');
+        const loading = document.getElementById('assignment-loading');
+        const select = document.getElementById('assignment-select');
+        const btn = document.getElementById('start-btn');
+        try {
+            const resp = await fetch('/api/assignments/list', { credentials: 'same-origin' });
+            if (!resp.ok) throw new Error('Failed to load');
+            assignmentsList = await resp.json();
+            loading.style.display = 'none';
+            if (assignmentsList.length === 0) {
+                loading.textContent = 'No assignments available.';
+                loading.style.display = 'block';
+                return;
+            }
+            if (assignmentsList.length === 1) {
+                btn.disabled = false;
+                btn.setAttribute('data-assignment-id', assignmentsList[0].id);
+                return;
+            }
+            select.style.display = 'block';
+            assignmentsList.forEach(function(a) {
+                const opt = document.createElement('option');
+                opt.value = a.id;
+                opt.textContent = a.title;
+                select.appendChild(opt);
+            });
+            btn.disabled = false;
+        } catch (e) {
+            loading.textContent = 'Unable to load assignments. Please ensure you are logged in.';
+            console.error(e);
+        }
+    }
+
+    function startSelectedAssignment() {
+        const btn = document.getElementById('start-btn');
+        const select = document.getElementById('assignment-select');
+        let assignmentId = btn.getAttribute('data-assignment-id');
+        if (!assignmentId && select && select.options.length) {
+            assignmentId = select.value;
+        }
+        if (!assignmentId) return;
+        startAssignment(parseInt(assignmentId, 10));
+    }
+
     async function startAssignment(assignmentId) {
         const btn = document.getElementById('start-btn');
         btn.disabled = true;
@@ -38,16 +88,15 @@
 
         try {
             const data = await AssignmentAPI.start(assignmentId);
-            // In a real SPA, we'd navigate to the first question.
-            // For this hybrid approach, we might just reload or redirect.
-            // Let's assume we store attempt ID and redirect to the quiz view.
             localStorage.setItem('currentAttemptId', data.id);
-            window.location.href = `/assignments/quiz/${data.id}`;
+            window.location.href = '/assignments/quiz/' + data.id + '/';
         } catch (e) {
             alert("Failed to start assignment. Please ensure you are logged in.");
             btn.disabled = false;
             btn.innerText = "Start Assessment";
         }
     }
+
+    document.addEventListener('DOMContentLoaded', loadAssignments);
 </script>
 {% endblock %}

@@ -43,35 +43,58 @@
         <p>Keep your learning profile focused and accurate.</p>
       </section>
 
-      <section class="snapshot-grid">
+      <section class="snapshot-grid" id="profile-snapshots">
         <article class="snapshot-card">
           <div class="snapshot-header">
             <span class="snapshot-icon">👤</span>
             <span>Name</span>
           </div>
-          <p class="snapshot-note">{{ user.get_full_name|default:user.username }}</p>
+          <p class="snapshot-note" id="profile-name">{{ user.get_full_name|default:user.username }}</p>
         </article>
         <article class="snapshot-card">
           <div class="snapshot-header">
-            <span class="snapshot-icon">🏫</span>
-            <span>College</span>
+            <span class="snapshot-icon">📧</span>
+            <span>Email</span>
           </div>
-          <p class="snapshot-note">Not set</p>
+          <p class="snapshot-note" id="profile-email">{{ user.email|default:"—" }}</p>
         </article>
         <article class="snapshot-card">
           <div class="snapshot-header">
             <span class="snapshot-icon">🧩</span>
-            <span>Skills Selected</span>
+            <span>Skills Overview</span>
           </div>
-          <p class="snapshot-note">Python, Algorithms</p>
+          <p class="snapshot-note" id="profile-skills">Loading…</p>
         </article>
       </section>
 
-      <section class="insight-card">
+      <section class="insight-card" id="profile-bio">
         <h2>Progress Summary</h2>
-        <p>Update your profile to keep assignments and intelligence insights aligned with your goals.</p>
+        <p id="profile-bio-text">Update your profile to keep assignments and intelligence insights aligned with your goals.</p>
       </section>
     </main>
   </div>
 </div>
+
+<script>
+(function() {
+  var API = { base: '/api', credentials: 'same-origin' };
+  function set(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text || '—';
+  }
+  Promise.all([
+    fetch(API.base + '/users/profile', { credentials: API.credentials }).then(function(r) { return r.ok ? r.json() : null; }).catch(function() { return null; }),
+    fetch(API.base + '/assignments/skills', { credentials: API.credentials }).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; })
+  ]).then(function(res) {
+    var profile = res[0];
+    var skills = res[1] || [];
+    if (profile) {
+      set('profile-name', profile.full_name || profile.username);
+      set('profile-email', profile.email);
+      set('profile-bio-text', profile.bio || 'Update your profile to keep assignments and intelligence insights aligned with your goals.');
+    }
+    set('profile-skills', skills.length ? skills.map(function(s) { return s.name; }).join(', ') : 'No skills in catalog yet.');
+  });
+})();
+</script>
 {% endblock %}

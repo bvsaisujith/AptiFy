@@ -43,43 +43,109 @@
         <p>AI insight based on your Module 2 performance data.</p>
       </section>
 
-      <section class="snapshot-grid">
+      <section class="snapshot-grid" id="intel-snapshots">
         <article class="snapshot-card">
           <div class="snapshot-header">
             <span class="snapshot-icon">📘</span>
             <span>Theory Strength</span>
           </div>
-          <p class="snapshot-note">Strong fundamentals</p>
+          <p class="snapshot-note" id="intel-concept">Loading…</p>
         </article>
         <article class="snapshot-card">
           <div class="snapshot-header">
             <span class="snapshot-icon">🧠</span>
             <span>Logic Strength</span>
           </div>
-          <p class="snapshot-note">Developing consistency</p>
+          <p class="snapshot-note" id="intel-logic">Loading…</p>
         </article>
         <article class="snapshot-card">
           <div class="snapshot-header">
             <span class="snapshot-icon">⚙️</span>
             <span>Execution Strength</span>
           </div>
-          <p class="snapshot-note">Needs reinforcement</p>
+          <p class="snapshot-note" id="intel-execution">Loading…</p>
         </article>
       </section>
 
-      <section class="insight-card">
+      <section class="insight-card" id="intel-insight">
         <h2>AI Explanation</h2>
-        <p>Your errors indicate difficulty converting logic into code. Focus on step-by-step algorithm construction and verifying outputs manually.</p>
+        <p id="intel-recommendation">Loading…</p>
       </section>
 
-      <section class="flow-card">
-        <h3>Root Cause</h3>
-        <div class="chip-group">
-          <span class="chip">Primary Gap: Execution Thinking</span>
-          <span class="chip">Secondary Gap: Algorithm Application</span>
-        </div>
+      <section class="flow-card" id="intel-gaps">
+        <h3>Detected Gaps</h3>
+        <div class="chip-group" id="intel-chips"></div>
+        <p class="text-muted" id="intel-empty" style="display:none;">Complete an assignment and generate an intelligence report to see detected gaps.</p>
+      </section>
+
+      <section class="insight-card" id="intel-reports-list" style="display:none;">
+        <h2>Your Reports</h2>
+        <ul id="intel-reports-ul"></ul>
       </section>
     </main>
   </div>
 </div>
+
+<script>
+(function() {
+  var API = { base: '/api', credentials: 'same-origin' };
+  function set(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
+  function show(id, on) { var el = document.getElementById(id); if (el) el.style.display = on ? '' : 'none'; }
+  function strengthNote(score) {
+    if (score == null) return '—';
+    if (score >= 70) return 'Strong';
+    if (score >= 50) return 'Developing';
+    return 'Needs reinforcement';
+  }
+
+  Promise.all([
+    fetch(API.base + '/analysis/reports', { credentials: API.credentials }).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; }),
+    fetch(API.base + '/assignments/attempts', { credentials: API.credentials }).then(function(r) { return r.ok ? r.json() : []; }).catch(function() { return []; })
+  ]).then(function(res) {
+    var reports = res[0] || [];
+    var attempts = res[1] || [];
+    var r = reports[0] || null;
+    var latestAttempt = attempts[0] || null;
+
+    if (latestAttempt) {
+      set('intel-concept', strengthNote(latestAttempt.concept_score));
+      set('intel-logic', strengthNote(latestAttempt.logic_score));
+      set('intel-execution', strengthNote(latestAttempt.execution_score));
+    } else {
+      set('intel-concept', '—');
+      set('intel-logic', '—');
+      set('intel-execution', '—');
+    }
+
+    if (!r) {
+      set('intel-recommendation', 'Complete an assignment and generate an intelligence report to see your AI explanation.');
+      show('intel-empty', true);
+      document.getElementById('intel-chips').innerHTML = '';
+      return;
+    }
+    set('intel-recommendation', r.recommendation || '—');
+    var chips = document.getElementById('intel-chips');
+    chips.innerHTML = '';
+    if (r.primary_gap) {
+      var s = document.createElement('span'); s.className = 'chip'; s.textContent = 'Primary: ' + r.primary_gap; chips.appendChild(s);
+    }
+    if (r.secondary_gap) {
+      var s2 = document.createElement('span'); s2.className = 'chip'; s2.textContent = 'Secondary: ' + r.secondary_gap; chips.appendChild(s2);
+    }
+    show('intel-empty', false);
+    if (reports.length > 1) {
+      show('intel-reports-list', true);
+      var ul = document.getElementById('intel-reports-ul');
+      reports.slice(0, 5).forEach(function(rep) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '/analysis/report/' + rep.attempt_id + '/';
+        a.textContent = 'Report (attempt ' + rep.attempt_id + ') – ' + rep.primary_gap + ' – ' + rep.generated_at;
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+    }
+  });
+})();
+</script>
 {% endblock %}
