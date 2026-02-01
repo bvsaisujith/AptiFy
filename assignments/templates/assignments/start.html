@@ -3,27 +3,30 @@
 {% block title %}Start Assignment | AptiFy{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 600px; margin: 2rem auto; text-align: center;">
-    <h1 style="margin-bottom: 1rem;">Assignment Module</h1>
-    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-        Welcome to the AptiFy Assessment Engine. This module evaluates your conceptual understanding,
-        logical reasoning, and execution skills.
-    </p>
+<section class="page-shell">
+    <div class="card hero-card">
+        <span class="badge badge-outline">Module 2</span>
+        <h1>Assignment Module</h1>
+        <p class="text-muted">
+            Welcome to the AptiFy Assessment Engine. This module evaluates your conceptual understanding,
+            logical reasoning, and execution skills.
+        </p>
 
-    <div style="text-align: left; margin-bottom: 2rem; background: #f1f5f9; padding: 1.5rem; border-radius: 0.5rem;">
-        <h3 style="margin-bottom: 0.5rem;">Instructions</h3>
-        <ul style="padding-left: 1.5rem; color: var(--text-primary);">
-            <li><strong>Quiz Section:</strong> Answer multiple-choice questions.</li>
-            <li><strong>Logic Section:</strong> Predict the output of code snippets.</li>
-            <li><strong>Coding Section:</strong> Solve programming problems optimally.</li>
-        </ul>
+        <div class="info-panel">
+            <h3>Instructions</h3>
+            <ul class="instruction-list">
+                <li><strong>Quiz Section:</strong> Answer multiple-choice questions.</li>
+                <li><strong>Logic Section:</strong> Predict the output of code snippets.</li>
+                <li><strong>Coding Section:</strong> Solve programming problems optimally.</li>
+            </ul>
+        </div>
+
+        <!-- For demo, we hardcode assignment ID 1 -->
+        <button id="start-btn" class="btn btn-primary" onclick="startAssignment(1)">
+            Start Assessment
+        </button>
     </div>
-
-    <!-- For demo, we hardcode assignment ID 1 -->
-    <button id="start-btn" class="btn btn-primary" onclick="startAssignment(1)">
-        Start Assessment
-    </button>
-</div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

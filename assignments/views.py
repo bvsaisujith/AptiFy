@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .models import Assignment, Question, AssignmentAttempt
+from .models import Assignment, Question, AssignmentAttempt, QuizSubmission, OutputGuessSubmission, CodingSubmission
 
 # Simple Views to serve templates. Authorization handled by templates or API calls.
 # Note: For production, we'd add @login_required. For strict Agent demo, I'll add it but ensure mock user works if needed.
@@ -20,7 +20,7 @@ def quiz_view(request, attempt_id):
     # Check submissions for this attempt. 
     # Find first question ID not in submissions?
     # This logic belongs in a Service, but here for View simplicity.
-    submitted_ids = attempt.submissions.values_list('question_id', flat=True)
+    submitted_ids = QuizSubmission.objects.filter(attempt=attempt).values_list('question_id', flat=True)
     next_q = questions.exclude(id__in=submitted_ids).first()
     
     if not next_q:
@@ -39,7 +39,7 @@ def output_guess_view(request, attempt_id):
     attempt = get_object_or_404(AssignmentAttempt, id=attempt_id)
     questions = Question.objects.filter(assignment=attempt.assignment, question_type='OUTPUT')
     
-    submitted_ids = attempt.submissions.values_list('question_id', flat=True)
+    submitted_ids = OutputGuessSubmission.objects.filter(attempt=attempt).values_list('question_id', flat=True)
     next_q = questions.exclude(id__in=submitted_ids).first()
     
     if not next_q:
@@ -55,7 +55,7 @@ def coding_view(request, attempt_id):
     attempt = get_object_or_404(AssignmentAttempt, id=attempt_id)
     questions = Question.objects.filter(assignment=attempt.assignment, question_type='CODE')
     
-    submitted_ids = attempt.submissions.values_list('question_id', flat=True)
+    submitted_ids = CodingSubmission.objects.filter(attempt=attempt).values_list('question_id', flat=True)
     next_q = questions.exclude(id__in=submitted_ids).first()
     
     if not next_q:

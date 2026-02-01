@@ -16,11 +16,13 @@ class QuizSubmitSchema(Schema):
     attempt_id: int
     question_id: int
     selected_option_id: str
+    time_taken_seconds: Optional[float] = None
 
 class OutputSubmitSchema(Schema):
     attempt_id: int
     question_id: int
     predicted_output: str
+    time_taken_seconds: Optional[float] = None
 
 class CodeSubmitSchema(Schema):
     attempt_id: int
@@ -61,14 +63,14 @@ def start_assignment(request, data: StartAssignmentSchema):
 @router.post("/quiz/submit", auth=django_auth)
 def submit_quiz_answer(request, data: QuizSubmitSchema):
     is_correct = SubmissionService.submit_quiz_answer(
-        data.attempt_id, data.question_id, data.selected_option_id
+        data.attempt_id, data.question_id, data.selected_option_id, data.time_taken_seconds
     )
     return {"success": True, "is_correct": is_correct}
 
 @router.post("/output/submit", auth=django_auth)
 def submit_output_guess(request, data: OutputSubmitSchema):
     is_correct = SubmissionService.submit_output_guess(
-        data.attempt_id, data.question_id, data.predicted_output
+        data.attempt_id, data.question_id, data.predicted_output, data.time_taken_seconds
     )
     return {"success": True, "is_correct": is_correct}
 

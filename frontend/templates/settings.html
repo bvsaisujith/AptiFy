@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Settings | AptiFy{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-shell">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="brand" href="/" aria-label="AptiFy home">
+        <img src="{% static 'img/aptify-logo.jpg' %}" alt="AptiFy logo" width="32" height="32">
+        <span>AptiFy</span>
+      </a>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-button" type="button" aria-label="Notifications">🔔</button>
+      <div class="avatar" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1" }}</div>
+      <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary btn-small">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" aria-label="Primary">
+        <a href="{% url 'dashboard' %}" class="sidebar-link">🏠 Dashboard</a>
+        <a href="{% url 'profile' %}" class="sidebar-link">📘 Module 1 – Profile</a>
+        <a href="/assignments/" class="sidebar-link">🧪 Module 2 – Assignment</a>
+        <a href="{% url 'intelligence' %}" class="sidebar-link">🧠 Module 3 – Intelligence</a>
+        <a href="{% url 'settings' %}" class="sidebar-link active">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <main class="dashboard-main">
+      <section class="welcome-card">
+        <h1>Settings</h1>
+        <p>Personalize your AptiFy experience.</p>
+      </section>
+
+      <section class="insight-card">
+        <h2>Notifications</h2>
+        <p>Coming soon.</p>
+      </section>
+
+      <section class="insight-card">
+        <h2>Account</h2>
+        <p>Manage account security and profile settings.</p>
+      </section>
+    </main>
+  </div>
+</div>
+{% endblock %}

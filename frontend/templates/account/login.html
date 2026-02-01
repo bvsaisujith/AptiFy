@@ -1,101 +1,98 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% load static %}
 {% load account socialaccount %}
-
-{% block title %}Login - AptiFy{% endblock %}
-
-{% block content %}
-<div class="login-page">
-  <div class="login-background">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-  </div>
-
-  <div class="login-container">
-    <div class="login-header">
-      <h1 class="brand">AptiFy</h1>
-      <p class="tagline">Unlock your potential with AI-driven learning</p>
-    </div>
-
-    <div class="login-card">
-      <h2 class="text-center mb-3">Welcome Back</h2>
-
-      {% if form.errors %}
-      <div class="error-message">
-        <p>Please correct the errors below.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - AptiFy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<body class="auth-page">
+  <main class="auth-split">
+    <section class="auth-section auth-logo-section" aria-label="AptiFy branding">
+      <div class="auth-logo-container">
+        <a class="auth-logo" href="/" aria-label="AptiFy home">
+          <img src="{% static 'img/aptify-logo.jpg' %}" alt="AptiFy logo" width="320" height="320" />
+        </a>
+        <p class="auth-tagline">Focused learning, real progress</p>
       </div>
+    </section>
+
+    <section class="auth-section auth-form-section" aria-label="Sign in">
+      <div class="auth-form-container">
+        <div class="auth-header">
+          <p class="auth-eyebrow">Welcome back</p>
+          <h1 id="login-title">Sign in to AptiFy</h1>
+          <p class="auth-subtitle">A calm workspace for consistent learning progress.</p>
+        </div>
+
+      {% get_providers as socialaccount_providers %}
+      {% if socialaccount_providers %}
+        {% for provider in socialaccount_providers %}
+          {% if provider.id == "google" %}
+            <a class="btn btn-google" href="{% provider_login_url provider.id process='login' %}">Continue with Google</a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <button class="btn btn-google" type="button" disabled>Continue with Google</button>
       {% endif %}
 
-      <form class="login-form" method="POST" action="{% url 'account_login' %}">
+      <div class="auth-divider"><span>or</span></div>
+
+      {% if form.errors %}
+        <p class="form-error" role="alert">Please correct the errors below.</p>
+      {% endif %}
+
+      <form id="loginForm" class="auth-form" method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
-        
-        {% for field in form %}
-        <div class="form-group">
-          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-          {{ field }}
-          
-          {% if field.errors %}
-          <div
-            style="
-              color: var(--color-danger);
-              font-size: 0.875rem;
-              margin-top: 0.25rem;
-            "
-          >
-            {{ field.errors.0 }}
+
+        <label class="field">
+          <span>{{ form.login.label }}</span>
+          {{ form.login }}
+        </label>
+
+        <label class="field">
+          <span>{{ form.password.label }}</span>
+          <div class="password-field">
+            {{ form.password }}
+            <button type="button" class="password-toggle" data-target="{{ form.password.id_for_label }}">Show</button>
           </div>
-          {% endif %}
-        </div>
-        {% endfor %}
-        
-        {% if redirect_field_value %}
-        <input
-          type="hidden"
-          name="{{ redirect_field_name }}"
-          value="{{ redirect_field_value }}"
-        />
+        </label>
+
+        {% if form.remember %}
+        <label class="checkbox-field">
+          {{ form.remember }}
+          <span>{{ form.remember.label }}</span>
+        </label>
         {% endif %}
 
-        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+
+        <div class="auth-actions">
+          <a class="text-link" href="{% url 'account_reset_password' %}">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        <p id="formError" class="form-error" role="alert" hidden>Please fill in all required fields.</p>
       </form>
 
-      <div class="text-center mb-3">
-        <span class="text-muted">Or continue with</span>
+      <p class="auth-footer">
+        New here?
+        <a class="text-link" href="{% url 'account_signup' %}">Create an account</a>
+      </p>
       </div>
+    </section>
+  </main>
 
-      <div class="flex gap-2 justify-center mb-3">
-        {% get_providers as socialaccount_providers %}
-        
-        {% for provider in socialaccount_providers %}
-        <a
-          href="{% provider_login_url provider.id process='login' %}"
-          class="btn btn-secondary btn-block"
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-          "
-        >
-          {{ provider.name }}
-        </a>
-        {% endfor %}
-      </div>
-
-      <div class="login-footer">
-        <p>
-          Don't have an account?
-          <a href="{% url 'account_signup' %}">Sign Up</a>
-        </p>
-        <p class="mt-1">
-          <a
-            href="{% url 'account_reset_password' %}"
-            style="font-size: 0.875rem"
-            >Forgot Password?</a
-          >
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

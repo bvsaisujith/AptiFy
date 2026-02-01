@@ -90,23 +90,13 @@ class ScoringService:
         if passed_pct == 100:
             correctness_score = 50.0
         elif passed_pct >= 50:
-            # Scale linearly 25-40
-            # Range is 50..99 (size 49) mapping to 25..40 (size 15)
-            # fraction = (passed_pct - 50) / 49
-            # score = 25 + (fraction * 15)
-            # Actually, let's treat it as continuous from 50 to <100
-            fraction = (passed_pct - 50) / 50.0 # 50->0, 100->1
-            # Wait, 100 is handled. So range is 50 to 99.99...
-            # User said "scale linearly".
-            # Let's map 50->25 and 100->40 (exclusive of 100 case? No, 100 is 50).
-            # The gap 40 to 50 is a jump. That's fine.
-            fraction = (passed_pct - 50) / 50.0 
-            correctness_score = 25 + (fraction * 15) # 50%->25, 100%->40. (Then 100 jumps to 50)
+            # Scale linearly 25-40 for partial passes
+            fraction = (passed_pct - 50) / 50.0
+            correctness_score = 25 + (fraction * 15)
         else:
-            # Scale linearly 0-20
-            # 0->0, 50->20
+            # Compiles but wrong: 10-20
             fraction = passed_pct / 50.0
-            correctness_score = 0 + (fraction * 20)
+            correctness_score = 10 + (fraction * 10)
             
         if correctness_score == 0:
             return {

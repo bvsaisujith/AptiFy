@@ -41,6 +41,7 @@ class Question(models.Model):
     assignment = models.ForeignKey(Assignment, related_name='questions', on_delete=models.CASCADE)
     skill = models.ForeignKey(Skill, on_delete=models.SET_NULL, null=True, blank=True)
     sub_skill = models.CharField(max_length=100, blank=True)
+    concept_tag = models.CharField(max_length=120, blank=True)
     difficulty = models.CharField(max_length=10, choices=Difficulty.choices, default=Difficulty.MEDIUM)
     question_type = models.CharField(max_length=10, choices=QuestionType.choices)
     
@@ -102,6 +103,7 @@ class AssignmentAttempt(models.Model):
     
     # Metadata
     error_patterns = models.JSONField(default=list, blank=True)
+    module2_data = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
         return f"{self.user} - {self.assignment} - {self.started_at}"

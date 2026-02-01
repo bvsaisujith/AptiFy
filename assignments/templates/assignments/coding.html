@@ -3,54 +3,47 @@
 {% block title %}Coding Challenge | AptiFy{% endblock %}
 
 {% block content %}
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; height: 100%;">
-    <!-- Left: Problem Statement -->
-    <div class="card" style="height: fit-content;">
+<section class="coding-layout">
+    <div class="card coding-panel">
         <div class="question-header">
             <div class="question-meta">
                 <span class="badge">Coding Section</span>
-                <span class="badge" style="background-color: var(--text-secondary);">Rank: {{ complexity_rank_label
-                    }}</span>
+                <span class="badge badge-muted">Rank: {{ complexity_rank_label }}</span>
             </div>
             <h2 class="question-title">Problem Statement</h2>
         </div>
-        <div style="font-size: 0.95rem; line-height: 1.7;">
+        <div class="body-text">
             {{ question.problem_statement|linebreaks }}
         </div>
 
-        <div style="margin-top: 2rem;">
-            <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Constraints</h3>
-            <div class="code-block"
-                style="background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; padding: 1rem;">
+        <div class="constraints">
+            <h3>Constraints</h3>
+            <div class="constraint-box">
                 {{ question.constraints|default:"No specific constraints." }}
             </div>
         </div>
     </div>
 
-    <!-- Right: Code Editor -->
-    <div style="display: flex; flex-direction: column;">
-        <div class="card" style="flex: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
-            <div
-                style="background: #1e293b; color: white; padding: 0.75rem 1rem; font-size: 0.875rem; display: flex; justify-content: space-between; align-items: center;">
+    <div class="coding-editor">
+        <div class="editor-card">
+            <div class="editor-header">
                 <span>main.py</span>
                 <span>Python 3.14</span>
             </div>
-            <textarea id="code-editor"
-                style="flex: 1; width: 100%; resize: none; border: none; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.5; background: #0f172a; color: #f8fafc;">
+            <textarea id="code-editor" class="editor-input">
 def solve():
     # Write your code here
     pass
             </textarea>
-            <div
-                style="padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center;">
-                <div id="status-msg" style="color: #94a3b8; font-size: 0.875rem;">Ready</div>
+            <div class="editor-footer">
+                <div id="status-msg" class="status-muted">Ready</div>
                 <button class="btn btn-primary" onclick="runAndSubmitCode()" id="run-btn">
                     Run & Submit
                 </button>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <input type="hidden" id="attempt-id" value="{{ attempt_id }}">
 <input type="hidden" id="question-id" value="{{ question.id }}">

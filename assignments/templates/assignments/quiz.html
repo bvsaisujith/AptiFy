@@ -3,31 +3,35 @@
 {% block title %}Quiz Section | AptiFy{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 800px; margin: 0 auto;">
-    <div class="question-header">
-        <div class="question-meta">
-            <span class="badge">Question {{ question_number }} of {{ total_questions }}</span>
-            <span style="margin-left: auto;">Quiz Section</span>
+<section class="page-shell">
+    <div class="card question-card">
+        <div class="question-header">
+            <div class="question-meta">
+                <span class="badge">Question {{ question_number }} of {{ total_questions }}</span>
+                <span class="meta-separator">•</span>
+                <span>Quiz Section</span>
+                <span class="meta-separator">•</span>
+                <span class="timer" id="quiz-timer">00:00</span>
+            </div>
+            <h2 class="question-title">{{ question.text }}</h2>
         </div>
-        <h2 class="question-title">{{ question.text }}</h2>
-    </div>
 
-    <div class="options-grid" id="options-container">
-        {% for option in question.options %}
-        <div class="option-card" onclick="selectOption('{{ option.id }}', this)">
-            <span style="font-weight: 600; margin-right: 0.5rem; color: var(--primary-color);">{{ option.id|upper
-                }}.</span>
-            {{ option.text }}
+        <div class="options-grid" id="options-container">
+            {% for option in question.options %}
+            <div class="option-card" onclick="selectOption('{{ option.id }}', this)">
+                <span class="option-id">{{ option.id|upper }}.</span>
+                {{ option.text }}
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <div style="display: flex; justify-content: flex-end;">
-        <button id="submit-btn" class="btn btn-primary" onclick="submitAnswer()" disabled>
-            Submit Answer
-        </button>
+        <div class="actions-row">
+            <button id="submit-btn" class="btn btn-primary" onclick="submitAnswer()" disabled>
+                Submit Answer
+            </button>
+        </div>
     </div>
-</div>
+</section>
 
 <!-- Hidden inputs to track state -->
 <input type="hidden" id="attempt-id" value="{{ attempt_id }}">
@@ -38,6 +42,22 @@
 {% block extra_js %}
 <script>
     let selectedOptionId = null;
+    const quizStartTime = performance.now();
+    const timerEl = document.getElementById('quiz-timer');
+
+    function formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+        const seconds = String(totalSeconds % 60).padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    }
+
+    const timerInterval = setInterval(() => {
+        const elapsed = performance.now() - quizStartTime;
+        if (timerEl) {
+            timerEl.textContent = formatTime(elapsed);
+        }
+    }, 500);
 
     function selectOption(id, element) {
         selectedOptionId = id;
@@ -60,7 +80,14 @@
         btn.innerText = "Submitting...";
 
         try {
-            const result = await AssignmentAPI.submitQuiz(attemptId, questionId, selectedOptionId);
+            clearInterval(timerInterval);
+            const timeTakenSeconds = (performance.now() - quizStartTime) / 1000;
+            const result = await AssignmentAPI.submitQuiz(
+                attemptId,
+                questionId,
+                selectedOptionId,
+                timeTakenSeconds
+            );
             // Logic to move to next question.
             // For now, we assume backend directs or we request next content.
             // Simplified: Reload or Redirect to next question ID provided by backend?

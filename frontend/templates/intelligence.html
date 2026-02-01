@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Module 3 - Intelligence | AptiFy{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-shell">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="brand" href="/" aria-label="AptiFy home">
+        <img src="{% static 'img/aptify-logo.jpg' %}" alt="AptiFy logo" width="32" height="32">
+        <span>AptiFy</span>
+      </a>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-button" type="button" aria-label="Notifications">🔔</button>
+      <div class="avatar" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1" }}</div>
+      <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary btn-small">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" aria-label="Primary">
+        <a href="{% url 'dashboard' %}" class="sidebar-link">🏠 Dashboard</a>
+        <a href="{% url 'profile' %}" class="sidebar-link">📘 Module 1 – Profile</a>
+        <a href="/assignments/" class="sidebar-link">🧪 Module 2 – Assignment</a>
+        <a href="{% url 'intelligence' %}" class="sidebar-link active">🧠 Module 3 – Intelligence</a>
+        <a href="{% url 'settings' %}" class="sidebar-link">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <main class="dashboard-main">
+      <section class="welcome-card">
+        <h1>Intelligence Summary</h1>
+        <p>AI insight based on your Module 2 performance data.</p>
+      </section>
+
+      <section class="snapshot-grid">
+        <article class="snapshot-card">
+          <div class="snapshot-header">
+            <span class="snapshot-icon">📘</span>
+            <span>Theory Strength</span>
+          </div>
+          <p class="snapshot-note">Strong fundamentals</p>
+        </article>
+        <article class="snapshot-card">
+          <div class="snapshot-header">
+            <span class="snapshot-icon">🧠</span>
+            <span>Logic Strength</span>
+          </div>
+          <p class="snapshot-note">Developing consistency</p>
+        </article>
+        <article class="snapshot-card">
+          <div class="snapshot-header">
+            <span class="snapshot-icon">⚙️</span>
+            <span>Execution Strength</span>
+          </div>
+          <p class="snapshot-note">Needs reinforcement</p>
+        </article>
+      </section>
+
+      <section class="insight-card">
+        <h2>AI Explanation</h2>
+        <p>Your errors indicate difficulty converting logic into code. Focus on step-by-step algorithm construction and verifying outputs manually.</p>
+      </section>
+
+      <section class="flow-card">
+        <h3>Root Cause</h3>
+        <div class="chip-group">
+          <span class="chip">Primary Gap: Execution Thinking</span>
+          <span class="chip">Secondary Gap: Algorithm Application</span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+{% endblock %}

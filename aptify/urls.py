@@ -25,6 +25,7 @@ from users.views import (
     CourseListView, CourseCreateView, CourseDetailView, CourseUpdateView, CourseDeleteView,
     CourseResourceCreateView, CourseResourceUpdateView, CourseResourceDeleteView
 )
+from django.views.generic import TemplateView
 
 urlpatterns = [
     # Landing page (public)
@@ -34,6 +35,9 @@ urlpatterns = [
     
     # Dashboard (protected)
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
+    path('intelligence/', TemplateView.as_view(template_name='intelligence.html'), name='intelligence'),
+    path('settings/', TemplateView.as_view(template_name='settings.html'), name='settings'),
     
     # Goals management (protected)
     path('goals/', GoalListView.as_view(), name='goal-list'),

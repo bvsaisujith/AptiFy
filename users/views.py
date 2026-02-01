@@ -10,7 +10,7 @@ from users.forms import GoalForm, GoalFilterForm, CourseForm, CourseResourceForm
 
 class LandingView(TemplateView):
     """Landing page - public entry point. Redirects to dashboard if logged in."""
-    template_name = 'landing.html'
+    template_name = 'index.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:

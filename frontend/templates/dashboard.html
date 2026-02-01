@@ -3,65 +3,124 @@
 
 {% block title %}Dashboard - AptiFy{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="dashboard-page">
-  <nav class="navbar">
-    <div class="navbar-content">
-      <h1 class="navbar-brand">AptiFy</h1>
-      <div class="navbar-menu">
-        <a href="{% url 'dashboard' %}" class="nav-link active">Overview</a>
-        <a href="{% url 'course-list' %}" class="nav-link">Courses</a>
-        <a href="{% url 'goal-list' %}" class="nav-link">Goals</a>
-        <a href="/assignments/" class="nav-link">Assignments</a>
-        <a href="/analysis/" class="nav-link">Analysis</a>
-        <a href="#" class="nav-link">Settings</a>
-      </div>
-      <div class="navbar-actions">
-        <div class="user-display">{{ user.username }}</div>
-        <form method="post" action="{% url 'account_logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outline btn-small">
-            Logout
-          </button>
-        </form>
-      </div>
+<div class="dashboard-shell">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="brand" href="/" aria-label="AptiFy home">
+        <img src="{% static 'img/aptify-logo.jpg' %}" alt="AptiFy logo" width="32" height="32">
+        <span>AptiFy</span>
+      </a>
     </div>
-  </nav>
+    <div class="topbar-right">
+      <button class="icon-button" type="button" aria-label="Notifications">🔔</button>
+      <div class="avatar" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1" }}</div>
+      <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary btn-small">Logout</button>
+      </form>
+    </div>
+  </header>
 
-  <div class="dashboard-container">
-    <main class="dashboard-content">
-      <header class="dashboard-header">
-        <h2>Welcome back, {{ user.first_name|default:user.username }}!</h2>
-        <p>Here's an overview of your learning progress.</p>
-      </header>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav" aria-label="Primary">
+        <a href="{% url 'dashboard' %}" class="sidebar-link active">🏠 Dashboard</a>
+        <a href="{% url 'profile' %}" class="sidebar-link">📘 Module 1 – Profile</a>
+        <a href="/assignments/" class="sidebar-link">🧪 Module 2 – Assignment</a>
+        <a href="{% url 'intelligence' %}" class="sidebar-link">🧠 Module 3 – Intelligence</a>
+        <a href="{% url 'settings' %}" class="sidebar-link">⚙️ Settings</a>
+      </nav>
+    </aside>
 
-      <div class="dashboard-cards">
-        <div class="card">
-          <div class="card-icon">📚</div>
-          <h3>Courses</h3>
-          <p>Explore curated learning paths with aggregated resources.</p>
-          <a href="{% url 'course-list' %}" class="btn btn-primary btn-block">Explore Courses</a>
+    <main class="dashboard-main">
+      <section class="welcome-card">
+        <div>
+          <h1>Welcome, {{ user.first_name|default:user.username }} 👋</h1>
+          <p>APTIFY evaluates understanding, thinking, and execution.</p>
         </div>
-        <div class="card">
-          <div class="card-icon">🎯</div>
-          <h3>Goals</h3>
-          <p>Track and manage your learning objectives.</p>
-          <a href="{% url 'goal-list' %}" class="btn btn-secondary btn-block">Manage Goals</a>
-        </div>
-        <div class="card">
-          <div class="card-icon">📊</div>
-          <h3>Performance</h3>
-          <p>View your detailed analytics and improvement areas.</p>
-          <button class="btn btn-secondary btn-block">View Stats</button>
-        </div>
-      </div>
+      </section>
 
-      <!-- System Status removed - focus on user content -->
+      <section class="snapshot-grid">
+        <article class="snapshot-card">
+          <div class="snapshot-header">
+            <span class="snapshot-icon">📘</span>
+            <span>Concept Understanding</span>
+          </div>
+          <div class="snapshot-metric">
+            <span>Quiz Score</span>
+            <strong>82%</strong>
+          </div>
+          <p class="snapshot-note">Strong Theory</p>
+        </article>
+        <article class="snapshot-card">
+          <div class="snapshot-header">
+            <span class="snapshot-icon">🧠</span>
+            <span>Logical Reasoning</span>
+          </div>
+          <div class="snapshot-metric">
+            <span>Output Guessing</span>
+            <strong>61%</strong>
+          </div>
+          <p class="snapshot-note">Needs Practice</p>
+        </article>
+        <article class="snapshot-card">
+          <div class="snapshot-header">
+            <span class="snapshot-icon">⚙️</span>
+            <span>Execution Ability</span>
+          </div>
+          <div class="snapshot-metric">
+            <span>Problem Solving</span>
+            <strong>38%</strong>
+          </div>
+          <p class="snapshot-note">Execution Weak</p>
+        </article>
+      </section>
+
+      <section class="insight-card">
+        <div class="insight-header">
+          <h2>🧠 AI Learning Insight</h2>
+          <p>You demonstrate strong theoretical understanding but face difficulty applying concepts during problem solving.
+            Primary gap detected in execution and algorithm application.</p>
+        </div>
+        <div class="chip-group">
+          <span class="chip-label">Weak Skills:</span>
+          <span class="chip">Algorithm Application</span>
+          <span class="chip">Loop Execution</span>
+          <span class="chip">Problem Decomposition</span>
+        </div>
+      </section>
+
+      <section class="flow-card">
+        <h3>Performance Flow</h3>
+        <div class="flow-row">
+          <div class="flow-step">
+            <span>Concept</span>
+            <strong>82%</strong>
+            <div class="flow-bar"><span style="width: 82%"></span></div>
+          </div>
+          <div class="flow-step">
+            <span>Logic</span>
+            <strong>61%</strong>
+            <div class="flow-bar"><span style="width: 61%"></span></div>
+          </div>
+          <div class="flow-step">
+            <span>Execution</span>
+            <strong>38%</strong>
+            <div class="flow-bar"><span style="width: 38%"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-actions">
+        <a class="btn btn-primary" href="/assignments/">🔁 Take New Assignment</a>
+        <a class="btn btn-secondary" href="{% url 'intelligence' %}">📘 View Detailed Report</a>
+      </section>
     </main>
-
-    <footer class="footer">
-      <p>&copy; 2026 AptiFy. All rights reserved.</p>
-    </footer>
   </div>
 </div>
 {% endblock %}

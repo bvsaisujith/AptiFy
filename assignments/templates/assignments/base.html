@@ -14,7 +14,13 @@
 <body>
     <div class="app-container">
         <header class="main-header">
-            <div class="logo">AptiFy <span class="badge">Module 2</span></div>
+            <div class="brand">
+                <a class="brand-link" href="/" aria-label="AptiFy home">
+                    <img src="{% static 'img/aptify-logo.jpg' %}" alt="AptiFy logo" width="32" height="32">
+                    <span>AptiFy</span>
+                </a>
+                <span class="badge">Assignments</span>
+            </div>
             <div class="user-info">
                 {% if user.is_authenticated %}
                     <span>{{ user.username }}</span>

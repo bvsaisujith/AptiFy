@@ -49,18 +49,20 @@ const AssignmentAPI = {
     start: async (assignmentId) => {
         return await apiCall('/start', 'POST', { assignment_id: assignmentId });
     },
-    submitQuiz: async (attemptId, questionId, selectedOptionId) => {
+    submitQuiz: async (attemptId, questionId, selectedOptionId, timeTakenSeconds = null) => {
         return await apiCall('/quiz/submit', 'POST', {
             attempt_id: attemptId,
             question_id: questionId,
-            selected_option_id: selectedOptionId
+            selected_option_id: selectedOptionId,
+            time_taken_seconds: timeTakenSeconds
         });
     },
-    submitOutput: async (attemptId, questionId, predictedOutput) => {
+    submitOutput: async (attemptId, questionId, predictedOutput, timeTakenSeconds = null) => {
         return await apiCall('/output/submit', 'POST', {
             attempt_id: attemptId,
             question_id: questionId,
-            predicted_output: predictedOutput
+            predicted_output: predictedOutput,
+            time_taken_seconds: timeTakenSeconds
         });
     },
     submitCode: async (attemptId, questionId, code, executionTime, complexity, passedPct, codeRuns) => {

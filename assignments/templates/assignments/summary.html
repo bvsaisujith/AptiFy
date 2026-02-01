@@ -3,35 +3,32 @@
 {% block title %}Results Summary | AptiFy{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 800px; margin: 2rem auto;">
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <h1 style="margin-bottom: 0.5rem;">Assessment Complete</h1>
-        <p style="color: var(--text-secondary);">Here is your performance breakdown.</p>
-    </div>
+<section class="page-shell">
+    <div class="card summary-card">
+        <div class="summary-header">
+            <h1>Assessment Complete</h1>
+            <p class="text-muted">Here is your performance breakdown.</p>
+        </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem;">
-        <div class="card" style="text-align: center; padding: 1.5rem; background: #f8fafc; border: none;">
-            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Concept Score</div>
-            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">{{
-                attempt.concept_score|floatformat:0 }}%</div>
+        <div class="summary-grid">
+            <div class="summary-tile">
+                <div class="summary-label">Concept Score</div>
+                <div class="summary-value">{{ attempt.concept_score|floatformat:0 }}%</div>
+            </div>
+            <div class="summary-tile">
+                <div class="summary-label">Logic Score</div>
+                <div class="summary-value">{{ attempt.logic_score|floatformat:0 }}%</div>
+            </div>
+            <div class="summary-tile">
+                <div class="summary-label">Execution Score</div>
+                <div class="summary-value">{{ attempt.execution_score|floatformat:0 }}%</div>
+            </div>
         </div>
-        <div class="card" style="text-align: center; padding: 1.5rem; background: #f8fafc; border: none;">
-            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Logic Score</div>
-            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">{{
-                attempt.logic_score|floatformat:0 }}%</div>
-        </div>
-        <div class="card" style="text-align: center; padding: 1.5rem; background: #f8fafc; border: none;">
-            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Execution Score</div>
-            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">{{
-                attempt.execution_score|floatformat:0 }}%</div>
-        </div>
-    </div>
 
-    <div style="text-align: center;">
-        <a href="{% url 'assignments:start' %}" class="btn btn-primary" style="margin-right: 1rem;">Back to Home</a>
-        <!-- Module 3 Link Placeholder -->
-        <a href="{% url 'analysis:report' attempt.id %}" class="btn"
-            style="background: var(--primary-color); color: white;">Generate Intelligence Report</a>
+        <div class="actions-row center">
+            <a href="{% url 'assignments:start' %}" class="btn btn-secondary">Back to Home</a>
+            <a href="{% url 'analysis:report' attempt.id %}" class="btn btn-primary">Generate Intelligence Report</a>
+        </div>
     </div>
-</div>
+</section>
 {% endblock %}

@@ -4,66 +4,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AptiFy - Loading</title>
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-    .loading-container {
-      text-align: center;
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    }
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #667eea;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .loading-text {
-      color: #333;
-      font-size: 18px;
-      font-weight: 500;
-    }
-  </style>
+  <title>AptiFy - Learn With Clarity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-  <div class="loading-container">
-    <div class="spinner"></div>
-    <p class="loading-text">Loading AptiFy...</p>
-  </div>
+  <a class="skip-link" href="#main-content">Skip to content</a>
 
-  <script src="{% static 'js/auth-guard.js' %}"></script>
-  <script>
-    /**
-     * Entry Gate Logic
-     * Check authentication status and redirect accordingly
-     */
-    (function() {
-      if (AuthGuard.isAuthenticated()) {
-        // User is authenticated, go to dashboard
-        AuthGuard.redirectToDashboard();
-      } else {
-        // User is not authenticated, go to login
-        AuthGuard.redirectToLogin();
-      }
-    })();
-  </script>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="/" aria-label="AptiFy home">
+        <img src="{% static 'img/aptify-logo.jpg' %}" alt="AptiFy logo" width="44" height="44">
+        <span class="logo-text">AptiFy</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="sr-only">Toggle menu</span>
+        </button>
+
+        <ul id="nav-menu" class="nav-menu">
+          <li><a class="nav-link" href="/">Home</a></li>
+          <li><a class="nav-link" href="#features">Features</a></li>
+          <li><a class="nav-link" href="#about">About</a></li>
+          <li><a class="nav-link nav-link-cta" href="{% url 'account_login' %}">Login</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero">
+      <div class="container hero-content">
+        <p class="hero-eyebrow">Focused learning, real progress</p>
+        <h1>Build learning momentum with calm, guided structure.</h1>
+        <p class="hero-subtitle">
+          AptiFy helps learners stay on track with clear goals, curated resources,
+          and a distraction-free experience designed for steady improvement.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="{% url 'account_signup' %}">Start learning</a>
+          <a class="btn btn-secondary" href="#features">Explore features</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="container">
+        <div class="section-header">
+          <h2>Designed for clarity</h2>
+          <p>Minimal tools that keep your attention where it matters.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">🧭</div>
+            <h3>Guided pathways</h3>
+            <p>Structured learning paths that keep priorities visible and achievable.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">✅</div>
+            <h3>Clear milestones</h3>
+            <p>Track progress with focused goals and simple completion checkpoints.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">📚</div>
+            <h3>Curated resources</h3>
+            <p>Only the essentials—quality links and readings that respect your time.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">🔒</div>
+            <h3>Trustworthy design</h3>
+            <p>A calm interface that keeps learning steady, private, and secure.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <div class="container about-content">
+        <div>
+          <h2>About AptiFy</h2>
+          <p>
+            AptiFy is a focused learning workspace that blends goals, courses, and
+            resources into one streamlined experience. Every element is designed to
+            reduce noise and encourage consistent progress.
+          </p>
+        </div>
+        <div class="about-card">
+          <p class="about-title">Built for consistent growth</p>
+          <p>Minimalism, clarity, and a professional tone help learners stay calm and effective.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© 2026 AptiFy. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="{% url 'account_login' %}">Login</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

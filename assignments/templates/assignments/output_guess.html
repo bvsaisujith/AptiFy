@@ -3,29 +3,33 @@
 {% block title %}Logical Reasoning | AptiFy{% endblock %}
 
 {% block content %}
-<div class="card" style="max-width: 800px; margin: 0 auto;">
-    <div class="question-header">
-        <div class="question-meta">
-            <span class="badge">Logic Section</span>
+<section class="page-shell">
+    <div class="card question-card">
+        <div class="question-header">
+            <div class="question-meta">
+                <span class="badge">Logic Section</span>
+                <span class="meta-separator">•</span>
+                <span class="timer" id="logic-timer">00:00</span>
+            </div>
+            <h2 class="question-title">Predict the output of the following code:</h2>
         </div>
-        <h2 class="question-title">Predict the output of the following code:</h2>
-    </div>
 
-    <div class="code-block">
-        <pre>{{ question.code_snippet }}</pre>
-    </div>
+        <div class="code-block">
+            <pre>{{ question.code_snippet }}</pre>
+        </div>
 
-    <div style="margin-bottom: 2rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Your Output Prediction:</label>
-        <input type="text" id="output-input" class="input-field" placeholder="Type the exact output here...">
-    </div>
+        <div class="field-block">
+            <label class="field-label" for="output-input">Your Output Prediction</label>
+            <input type="text" id="output-input" class="input-field" placeholder="Type the exact output here...">
+        </div>
 
-    <div style="display: flex; justify-content: flex-end;">
-        <button id="submit-btn" class="btn btn-primary" onclick="submitOutput()">
-            Submit Prediction
-        </button>
+        <div class="actions-row">
+            <button id="submit-btn" class="btn btn-primary" onclick="submitOutput()">
+                Submit Prediction
+            </button>
+        </div>
     </div>
-</div>
+</section>
 
 <input type="hidden" id="attempt-id" value="{{ attempt_id }}">
 <input type="hidden" id="question-id" value="{{ question.id }}">
@@ -33,6 +37,23 @@
 
 {% block extra_js %}
 <script>
+    const logicStartTime = performance.now();
+    const logicTimerEl = document.getElementById('logic-timer');
+
+    function formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+        const seconds = String(totalSeconds % 60).padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    }
+
+    const logicTimerInterval = setInterval(() => {
+        const elapsed = performance.now() - logicStartTime;
+        if (logicTimerEl) {
+            logicTimerEl.textContent = formatTime(elapsed);
+        }
+    }, 500);
+
     async function submitOutput() {
         const attemptId = document.getElementById('attempt-id').value;
         const questionId = document.getElementById('question-id').value;
@@ -48,7 +69,9 @@
         btn.innerText = "Submitting...";
 
         try {
-            await AssignmentAPI.submitOutput(attemptId, questionId, predicted);
+            clearInterval(logicTimerInterval);
+            const timeTakenSeconds = (performance.now() - logicStartTime) / 1000;
+            await AssignmentAPI.submitOutput(attemptId, questionId, predicted, timeTakenSeconds);
             window.location.href = "{{ next_url }}";
         } catch (e) {
             console.error(e);
